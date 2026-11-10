@@ -1,0 +1,6 @@
+{
+  "budget": { "max_tokens": 20000, "max_calls": 25 },
+  "rate":   { "max_calls": 12, "window_seconds": 60 },
+  "repeat": { "max_identical": 3, "window_seconds": 600 },
+  "half_open_after_seconds": 30
+}

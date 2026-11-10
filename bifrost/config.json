@@ -1,0 +1,30 @@
+{
+  "$schema": "https://www.getbifrost.ai/schema",
+  "client": {
+    "drop_excess_requests": false,
+    "enable_logging": true
+  },
+  "providers": {
+    "ollama": {
+      "keys": [
+        {
+          "name": "ollama-local",
+          "value": "",
+          "models": [
+            "*"
+          ],
+          "weight": 1.0,
+          "ollama_key_config": {
+            "url": "http://ollama:11434"
+          }
+        }
+      ],
+      "network_config": {
+        "allow_private_network": true
+      }
+    }
+  },
+  "config_store": {
+    "enabled": false
+  }
+}

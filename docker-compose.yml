@@ -1,0 +1,53 @@
+services:
+  ollama:
+    image: ollama/ollama:0.14.3
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  bifrost:
+    image: maximhq/bifrost:v2.4.0
+    environment:
+      APP_HOST: 0.0.0.0
+      APP_PORT: "8080"
+      LOG_LEVEL: warn
+    volumes:
+      - ./bifrost:/app/data
+    ports:
+      - "8080:8080"
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  breaker:
+    build: ./breaker
+    environment:
+      UPSTREAM: http://bifrost:8080
+      RULES_FILE: /rules/${RULES:-all}.json
+      PORT: "9000"
+    volumes:
+      - ./rules:/rules:ro
+    ports:
+      - "9000:9000"
+    depends_on:
+      - bifrost
+
+  agent:
+    build: ./agent
+    profiles: ["run"]
+    environment:
+      GATEWAY_URL: http://breaker:9000/v1/chat/completions
+      MODEL: ollama/${MODEL:-qwen2.5:1.5b}
+      MAX_ITERATIONS: ${MAX_ITERATIONS:-30}
+      RUN_NAME: ${RUN_NAME:-run}
+    depends_on:
+      - breaker
+
+volumes:
+  ollama:

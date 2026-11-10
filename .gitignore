@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+bifrost/*.db
+bifrost/logs/
+.DS_Store
